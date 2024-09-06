@@ -4,59 +4,80 @@
 
 ## User settings
 xcuserdata/
+xcshareddata/
 
 ## Obj-C/Swift specific
 *.hmap
-
-## App packaging
 *.ipa
 *.dSYM.zip
 *.dSYM
 
-## Playgrounds
+## Build generated
+DerivedData/
+build/
+Build/
+
+# Automatically generated schemadata and workspace settings
+*.xccheckout
+*.xcscmblueprint
+*.xcworkspace/contents.xcworkspacedata
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Playgrounds
 timeline.xctimeline
 playground.xcworkspace
 
 # Swift Package Manager
 #
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-# Package.resolved
-# *.xcodeproj
-#
-# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
-# hence it is not needed unless you have added a package configuration file to your project
-# .swiftpm
-
+# Avoid checking in dependencies' source code and build artifacts.
+.swiftpm/
 .build/
+Package.resolved
 
 # CocoaPods
 #
-# We recommend against adding the Pods directory to your .gitignore. However
+# We recommend against adding the Pods directory to your .gitignore. However,
 # you should judge for yourself, the pros and cons are mentioned at:
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
-#
-# Add this line if you want to avoid checking in source code from the Xcode workspace
-# *.xcworkspace
+Pods/
+*.xcworkspace
 
 # Carthage
 #
 # Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
-
 Carthage/Build/
 
 # fastlane
 #
-# It is recommended to not store the screenshots in the git repo.
+# It is recommended not to store the screenshots in the git repo.
 # Instead, use fastlane to re-generate the screenshots whenever they are needed.
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
-
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+fastlane/*.lock
+
+# Archives
+*.xcarchive
+
+# App packaging
+*.ipa
+
+# SwiftUI Previews
+.swiftpm/xcode/schemes/
+*.swiftpm/.build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Xcode Server
+.xccache/
+.xcresult/
+
+# xcdebugger
+*.xcdebugger/
