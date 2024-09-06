@@ -16,6 +16,8 @@ struct LocationFeature {
     case searchCity(String)
     case cityCoordinateReceived(Result<CLLocationCoordinate2D, LocationError>)
     case setError(String?)
+    case checkLocationServices
+    case authorizationRequested
   }
 
   @Dependency(\.locationManager) var locationManager
@@ -24,6 +26,16 @@ struct LocationFeature {
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
+      case .checkLocationServices:
+        guard locationManager.locationServicesEnabled() else {
+          state.errorMessage = LocationError.locationServicesDisabled.localizedDescription
+          return .none
+        }
+        return .run { send in
+          locationManager.requestAuthorization()
+          await send(.authorizationRequested)
+        }
+
       case .requestCurrentLocation:
         state.isRequestingLocation = true
         return .run { send in
@@ -74,8 +86,11 @@ struct LocationFeature {
       case let .setError(message):
         state.errorMessage = message
         return .none
+
+      case .authorizationRequested:
+
+        return .none
       }
     }
   }
 }
-

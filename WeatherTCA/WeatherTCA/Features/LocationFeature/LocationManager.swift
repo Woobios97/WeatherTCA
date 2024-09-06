@@ -5,9 +5,10 @@ import ComposableArchitecture
 struct LocationManager {
   var requestCurrentLocation: () async throws -> CLLocationCoordinate2D
   var searchCity: (String) async throws -> CLLocationCoordinate2D
+  var requestAuthorization: () -> Void
+  var locationServicesEnabled: () -> Bool
 }
 
-// 실제 LocationManager 구현
 extension LocationManager: DependencyKey {
   static let liveValue = Self(
     requestCurrentLocation: {
@@ -48,6 +49,13 @@ extension LocationManager: DependencyKey {
       } else {
         throw LocationError.noLocationFound
       }
+    },
+    requestAuthorization: {
+      let manager = CLLocationManager()
+      manager.requestWhenInUseAuthorization()
+    },
+    locationServicesEnabled: {
+      return CLLocationManager.locationServicesEnabled()
     }
   )
 }
@@ -56,20 +64,18 @@ extension DependencyValues {
   var locationManager: LocationManager {
     get { self[LocationManager.self] }
     set { self[LocationManager.self] = newValue }
-}
+  }
 }
 
-// LocationManagerDelegate 클래스 정의
 private class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
-var didUpdateLocations: (([CLLocation]) -> Void)?
-var didFailWithError: ((Error) -> Void)?
+  var didUpdateLocations: (([CLLocation]) -> Void)?
+  var didFailWithError: ((Error) -> Void)?
 
-func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+  func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     didUpdateLocations?(locations)
-}
+  }
 
-func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     didFailWithError?(error)
+  }
 }
-}
-

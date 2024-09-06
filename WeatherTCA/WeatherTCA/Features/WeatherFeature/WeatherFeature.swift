@@ -30,7 +30,14 @@ struct WeatherFeature {
         state.errorMessage = nil
         return .run { send in
           do {
+            // 검색 시작을 알리는 로그 추가
+            print("🔍 Searching for city: \(cityName)")
+
             let coordinate = try await locationManager.searchCity(cityName)
+
+            // 검색 결과를 로그로 출력
+            print("📍 Found coordinates for city \(cityName): \(coordinate)")
+
             let cityWeather = CityWeather(
               cityName: cityName,
               latitude: coordinate.latitude,
@@ -38,6 +45,8 @@ struct WeatherFeature {
             )
             await send(.fetchWeather(cityWeather))
           } catch {
+            print("❌ Failed to find location for city: \(cityName), error: \(error)")
+
             await send(.setError("Failed to find city location."))
             await send(.weatherFetched(.failure(.locationNotFound("Could not find location for city: \(cityName)"))))
           }

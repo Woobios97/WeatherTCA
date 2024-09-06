@@ -78,16 +78,7 @@ struct WeatherView: View {
 
   private func addButton(viewStore: ViewStore<WeatherFeature.State, WeatherFeature.Action>) -> some View {
     Button("Add City") {
-      viewStore.send(.addCity("New York")) // Replace with actual input mechanism
+      viewStore.send(.addCity("New york"))
     }
   }
 }
-
-//#Preview {
-//    WeatherView(
-//        store: Store(
-//            initialState: WeatherFeature.State(),
-//            reducer: WeatherFeature()
-//        )
-//    )
-//}

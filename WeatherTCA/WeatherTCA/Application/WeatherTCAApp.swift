@@ -2,22 +2,49 @@ import ComposableArchitecture
 import SwiftUI
 import SwiftData
 
+class ModelContainerManager: ObservableObject {
+  @Published var modelContainer: ModelContainer?
+
+  init() {
+    setupModelContainer()
+  }
+
+  private func setupModelContainer() {
+    do {
+      let container = try ModelContainer(for: CityWeather.self)
+      self.modelContainer = container
+      print("Model container successfully set up.")
+    } catch {
+      print("Failed to set up the model container: \(error.localizedDescription)")
+      print("Detailed error: \(error)")
+    }
+  }
+}
+
 @main
 struct WeatherTCAApp: App {
-  let store = Store(
-    initialState: WeatherFeature.State(),
-    reducer: {
-      WeatherFeature()
-    }
-  )
+  @StateObject private var modelContainerManager = ModelContainerManager()
 
   var body: some Scene {
     WindowGroup {
-      WeatherView(store: store)
-        .onAppear {
-          // 앱이 시작될 때 초기화 작업을 수행할 수 있습니다.
-          // 예를 들어, 초기 데이터를 로드하거나 사용자 권한을 요청할 수 있습니다.
-        }
+      if let modelContainer = modelContainerManager.modelContainer {
+        ContentView()
+          .modelContainer(modelContainer)
+      } else {
+        Text("Failed to load data.")
+      }
+    }
+  }
+}
+
+struct ContentView: View {
+  static let store = Store(initialState: WeatherFeature.State()) {
+    WeatherFeature()
+  }
+
+  var body: some View {
+    NavigationView {
+      WeatherView(store: ContentView.store)
     }
   }
 }

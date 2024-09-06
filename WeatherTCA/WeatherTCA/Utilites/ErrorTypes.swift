@@ -27,4 +27,3 @@ enum LocationError: Error, Equatable {
     }
   }
 }
-

@@ -23,7 +23,7 @@
 		088089122C8990FE00139DA1 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088089112C8990FE00139DA1 /* Helpers.swift */; };
 		088089142C89973500139DA1 /* SearchCityClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088089132C89973500139DA1 /* SearchCityClient.swift */; };
 		088089162C89A7DA00139DA1 /* LocationFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088089152C89A7DA00139DA1 /* LocationFeature.swift */; };
-		088089182C89A90400139DA1 /* locaionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088089172C89A90400139DA1 /* locaionManager.swift */; };
+		088089182C89A90400139DA1 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 088089172C89A90400139DA1 /* LocationManager.swift */; };
 		0880891B2C89AEB700139DA1 /* ErrorTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0880891A2C89AEB700139DA1 /* ErrorTypes.swift */; };
 /* End PBXBuildFile section */
 
@@ -64,7 +64,7 @@
 		088089112C8990FE00139DA1 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		088089132C89973500139DA1 /* SearchCityClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCityClient.swift; sourceTree = "<group>"; };
 		088089152C89A7DA00139DA1 /* LocationFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFeature.swift; sourceTree = "<group>"; };
-		088089172C89A90400139DA1 /* locaionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = locaionManager.swift; sourceTree = "<group>"; };
+		088089172C89A90400139DA1 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		0880891A2C89AEB700139DA1 /* ErrorTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorTypes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -212,7 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				088089152C89A7DA00139DA1 /* LocationFeature.swift */,
-				088089172C89A90400139DA1 /* locaionManager.swift */,
+				088089172C89A90400139DA1 /* LocationManager.swift */,
 			);
 			path = LocationFeature;
 			sourceTree = "<group>";
@@ -360,7 +360,7 @@
 				088089122C8990FE00139DA1 /* Helpers.swift in Sources */,
 				088089162C89A7DA00139DA1 /* LocationFeature.swift in Sources */,
 				088088D12C8987C000139DA1 /* WeatherTCAApp.swift in Sources */,
-				088089182C89A90400139DA1 /* locaionManager.swift in Sources */,
+				088089182C89A90400139DA1 /* LocationManager.swift in Sources */,
 				0880890C2C8990E300139DA1 /* WeatherClient.swift in Sources */,
 				0880890E2C8990ED00139DA1 /* Extensions.swift in Sources */,
 				0880891B2C89AEB700139DA1 /* ErrorTypes.swift in Sources */,
@@ -532,6 +532,7 @@
 				DEVELOPMENT_TEAM = FQRWL84Z3B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "이 앱은 날씨 정보를 제공하기 위해 사용자의 위치에 접근합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -542,7 +543,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.woosub.WeatherTCAction;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woosubkim.weathertcaction3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -562,6 +563,7 @@
 				DEVELOPMENT_TEAM = FQRWL84Z3B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "이 앱은 날씨 정보를 제공하기 위해 사용자의 위치에 접근합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -572,7 +574,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.woosub.WeatherTCAction;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woosubkim.weathertcaction3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
