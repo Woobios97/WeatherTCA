@@ -8,16 +8,15 @@ struct LocationFeature {
     var currentLocation: CLLocationCoordinate2D?
     var isRequestingLocation: Bool = false
     var errorMessage: String?
+    var authorizationStatus: CLAuthorizationStatus = .notDetermined
   }
 
   enum Action: Equatable {
+    case requestLocationPermission
+    case locationPermissionGranted(CLAuthorizationStatus)
     case requestCurrentLocation
     case currentLocationReceived(Result<CLLocationCoordinate2D, LocationError>)
-    case searchCity(String)
-    case cityCoordinateReceived(Result<CLLocationCoordinate2D, LocationError>)
     case setError(String?)
-    case checkLocationServices
-    case authorizationRequested
   }
 
   @Dependency(\.locationManager) var locationManager
@@ -26,18 +25,27 @@ struct LocationFeature {
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-      case .checkLocationServices:
-        guard locationManager.locationServicesEnabled() else {
-          state.errorMessage = LocationError.locationServicesDisabled.localizedDescription
-          return .none
-        }
+      case .requestLocationPermission:
+        state.errorMessage = nil
         return .run { send in
           locationManager.requestAuthorization()
-          await send(.authorizationRequested)
+          let status = locationManager.requestAuthorization
+          await send(.locationPermissionGranted(status))
+//          await send(.locationPermissionGranted(status))
+        }
+
+      case let .locationPermissionGranted(status):
+        state.authorizationStatus = status
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+          return .send(.requestCurrentLocation)
+        } else {
+          state.errorMessage = "Location permission not granted."
+          return .none
         }
 
       case .requestCurrentLocation:
         state.isRequestingLocation = true
+        state.errorMessage = nil
         return .run { send in
           do {
             let coordinate = try await locationManager.requestCurrentLocation()
@@ -59,36 +67,8 @@ struct LocationFeature {
         state.isRequestingLocation = false
         return .none
 
-      case let .searchCity(cityName):
-        state.isRequestingLocation = true
-        state.errorMessage = nil
-        return .run { send in
-          do {
-            let coordinate = try await locationManager.searchCity(cityName)
-            await send(.cityCoordinateReceived(.success(coordinate)))
-          } catch let error as LocationError {
-            await send(.cityCoordinateReceived(.failure(error)))
-          } catch {
-            await send(.cityCoordinateReceived(.failure(.noLocationFound)))
-          }
-        }
-
-      case let .cityCoordinateReceived(.success(coordinate)):
-        state.currentLocation = coordinate
-        state.isRequestingLocation = false
-        return .none
-
-      case let .cityCoordinateReceived(.failure(error)):
-        state.errorMessage = error.localizedDescription
-        state.isRequestingLocation = false
-        return .none
-
       case let .setError(message):
         state.errorMessage = message
-        return .none
-
-      case .authorizationRequested:
-
         return .none
       }
     }

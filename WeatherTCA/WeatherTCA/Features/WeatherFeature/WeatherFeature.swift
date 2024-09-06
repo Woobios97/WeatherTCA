@@ -1,5 +1,5 @@
 import ComposableArchitecture
-import Foundation
+import SwiftUI
 
 @Reducer
 struct WeatherFeature {
@@ -8,11 +8,11 @@ struct WeatherFeature {
     var cities: [CityWeather] = []
     var isLoading: Bool = false
     var errorMessage: String?
+    var locationFeature: LocationFeature.State = LocationFeature.State()
   }
 
   enum Action: Equatable {
-    case addCity(String)
-    case removeCity(UUID)
+    case locationFeature(LocationFeature.Action)
     case fetchWeather(CityWeather)
     case weatherFetched(Result<CityWeather, WeatherError>)
     case setError(String?)
@@ -23,47 +23,29 @@ struct WeatherFeature {
   @Dependency(\.mainQueue) var mainQueue
 
   var body: some ReducerOf<Self> {
+    Scope(state: \.locationFeature, action: /Action.locationFeature) {
+      LocationFeature()
+    }
+
     Reduce { state, action in
       switch action {
-      case .addCity(let cityName):
+      case .locationFeature(.currentLocationReceived(.success(let coordinate))):
         state.isLoading = true
-        state.errorMessage = nil
         return .run { send in
-          do {
-            // 검색 시작을 알리는 로그 추가
-            print("🔍 Searching for city: \(cityName)")
-
-            let coordinate = try await locationManager.searchCity(cityName)
-
-            // 검색 결과를 로그로 출력
-            print("📍 Found coordinates for city \(cityName): \(coordinate)")
-
-            let cityWeather = CityWeather(
-              cityName: cityName,
-              latitude: coordinate.latitude,
-              longitude: coordinate.longitude
-            )
-            await send(.fetchWeather(cityWeather))
-          } catch {
-            print("❌ Failed to find location for city: \(cityName), error: \(error)")
-
-            await send(.setError("Failed to find city location."))
-            await send(.weatherFetched(.failure(.locationNotFound("Could not find location for city: \(cityName)"))))
-          }
+          let cityWeather = CityWeather(
+            cityName: "Current Location",
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
+          )
+          await send(.fetchWeather(cityWeather))
         }
 
-      case .fetchWeather(let city):
-        return .run { send in
-          do {
-            let fetchedCityWeather = try await weatherClient.fetchWeather(city.latitude, city.longitude)
-            await send(.weatherFetched(.success(fetchedCityWeather)))
-          } catch let error as WeatherError {
-            await send(.weatherFetched(.failure(error)))
-          } catch {
-            await send(.weatherFetched(.failure(.failedToFetchWeather("Unexpected error: \(error.localizedDescription)"))))
-          }
-        }
-        .animation()
+      case let .fetchWeather(city):
+        return weatherClient
+          .fetchWeather(city.latitude, city.longitude)
+          .receive(on: mainQueue)
+          .catchToEffect()
+          .map(Action.weatherFetched)
 
       case let .weatherFetched(.success(cityWeather)):
         state.cities.append(cityWeather)
@@ -75,12 +57,11 @@ struct WeatherFeature {
         state.errorMessage = error.localizedDescription
         return .none
 
-      case let .removeCity(cityId):
-        state.cities.removeAll { $0.id == cityId }
-        return .none
-
       case let .setError(message):
         state.errorMessage = message
+        return .none
+
+      default:
         return .none
       }
     }

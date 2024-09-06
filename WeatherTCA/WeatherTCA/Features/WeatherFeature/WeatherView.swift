@@ -1,48 +1,44 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct WeatherErrorWrapper: Identifiable {
-  let id = UUID()
-  let message: String
-}
-
 struct WeatherView: View {
   let store: StoreOf<WeatherFeature>
 
   var body: some View {
     WithViewStore(self.store, observe: { $0 }) { viewStore in
-      NavigationView {
-        VStack {
-          if viewStore.isLoading {
-            ProgressView("Loading weather...")
-          } else if viewStore.cities.isEmpty {
-            Text("No cities added yet")
-              .foregroundColor(.gray)
-              .padding()
-          } else {
-            cityList(viewStore: viewStore)
-          }
+      VStack {
+        if viewStore.isLoading {
+          ProgressView("Loading weather...")
+        } else if viewStore.cities.isEmpty {
+          Text("No cities added yet")
+            .foregroundColor(.gray)
+            .padding()
+        } else {
+          cityList(viewStore: viewStore)
         }
-        .navigationTitle("Weather App")
-        .toolbar {
-          ToolbarItem(placement: .navigationBarTrailing) {
-            addButton(viewStore: viewStore)
-          }
+      }
+      .onAppear {
+        viewStore.send(.locationFeature(.requestLocationPermission))
+      }
+      .navigationTitle("Weather App")
+      .toolbar {
+        ToolbarItem(placement: .navigationBarTrailing) {
+          addButton(viewStore: viewStore)
         }
-        .alert(
-          item: Binding(
-            get: {
-              viewStore.errorMessage.map { WeatherErrorWrapper(message: $0) }
-            },
-            set: { _ in viewStore.send(.setError(nil)) }
-          )
-        ) { weatherError in
-          Alert(
-            title: Text("Error"),
-            message: Text(weatherError.message),
-            dismissButton: .default(Text("OK"))
-          )
-        }
+      }
+      .alert(
+        item: Binding(
+          get: {
+            viewStore.errorMessage.map { WeatherErrorWrapper(message: $0) }
+          },
+          set: { _ in viewStore.send(.setError(nil)) }
+        )
+      ) { weatherError in
+        Alert(
+          title: Text("Error"),
+          message: Text(weatherError.message),
+          dismissButton: .default(Text("OK"))
+        )
       }
     }
   }
@@ -78,7 +74,7 @@ struct WeatherView: View {
 
   private func addButton(viewStore: ViewStore<WeatherFeature.State, WeatherFeature.Action>) -> some View {
     Button("Add City") {
-      viewStore.send(.addCity("New york"))
+      viewStore.send(.addCity("San Francisco, CA"))
     }
   }
 }
