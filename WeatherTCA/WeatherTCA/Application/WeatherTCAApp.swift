@@ -42,8 +42,10 @@ struct ContentView: View {
     WeatherFeature()
   }
 
+  @State private var navigationPath = NavigationPath()
+
   var body: some View {
-    NavigationView {
+    NavigationStack(path: $navigationPath) {
       WeatherView(store: ContentView.store)
     }
   }
