@@ -82,3 +82,5 @@ fastlane/*.lock
 
 # xcdebugger
 *.xcdebugger/
+.DS_Store
+WeatherTCA/WeatherTCA.xcodeproj/project.xcworkspace/xcuserdata/snplab.xcuserdatad/UserInterfaceState.xcuserstate
