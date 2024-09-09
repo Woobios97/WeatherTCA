@@ -28,10 +28,8 @@ struct LocationFeature {
       case .requestLocationPermission:
         state.errorMessage = nil
         return .run { send in
-          locationManager.requestAuthorization()
-          let status = locationManager.requestAuthorization
+          let status = locationManager.requestAuthorization()
           await send(.locationPermissionGranted(status))
-//          await send(.locationPermissionGranted(status))
         }
 
       case let .locationPermissionGranted(status):

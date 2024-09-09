@@ -1,6 +1,11 @@
 import SwiftUI
 import ComposableArchitecture
 
+struct WeatherErrorWrapper: Identifiable {
+  let id = UUID()
+  let message: String
+}
+
 struct WeatherView: View {
   let store: StoreOf<WeatherFeature>
 

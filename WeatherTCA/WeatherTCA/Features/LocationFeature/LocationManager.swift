@@ -5,7 +5,7 @@ import ComposableArchitecture
 struct LocationManager {
   var requestCurrentLocation: () async throws -> CLLocationCoordinate2D
   var searchCity: (String) async throws -> CLLocationCoordinate2D
-  var requestAuthorization: () -> Void
+  var requestAuthorization: () -> CLAuthorizationStatus
   var locationServicesEnabled: () -> Bool
 }
 
@@ -53,6 +53,7 @@ extension LocationManager: DependencyKey {
     requestAuthorization: {
       let manager = CLLocationManager()
       manager.requestWhenInUseAuthorization()
+      return manager.authorizationStatus
     },
     locationServicesEnabled: {
       return CLLocationManager.locationServicesEnabled()

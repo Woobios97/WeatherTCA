@@ -15,6 +15,8 @@ struct WeatherFeature {
     case locationFeature(LocationFeature.Action)
     case fetchWeather(CityWeather)
     case weatherFetched(Result<CityWeather, WeatherError>)
+    case removeCity(UUID)
+    case addCity(String)
     case setError(String?)
   }
 
@@ -41,11 +43,15 @@ struct WeatherFeature {
         }
 
       case let .fetchWeather(city):
-        return weatherClient
-          .fetchWeather(city.latitude, city.longitude)
-          .receive(on: mainQueue)
-          .catchToEffect()
-          .map(Action.weatherFetched)
+        return .run { send in
+          do {
+            let cityWeather = try await weatherClient.fetchWeather(city.latitude, city.longitude)
+            await send(.weatherFetched(.success(cityWeather)))
+          } catch {
+            let weatherError = WeatherError.failedToFetchWeather(error.localizedDescription)
+            await send(.weatherFetched(.failure(weatherError)))
+          }
+        }
 
       case let .weatherFetched(.success(cityWeather)):
         state.cities.append(cityWeather)
@@ -56,6 +62,26 @@ struct WeatherFeature {
         state.isLoading = false
         state.errorMessage = error.localizedDescription
         return .none
+
+      case let .removeCity(cityId):
+        state.cities.removeAll { $0.id == cityId }
+        return .none
+
+      case let .addCity(cityName):
+        state.isLoading = true
+        return .run { send in
+          do {
+            let coordinate = try await locationManager.searchCity(cityName)
+            let cityWeather = CityWeather(
+              cityName: cityName,
+              latitude: coordinate.latitude,
+              longitude: coordinate.longitude
+            )
+            await send(.fetchWeather(cityWeather))
+          } catch {
+            await send(.setError("Failed to add city: \(cityName)"))
+          }
+        }
 
       case let .setError(message):
         state.errorMessage = message
